@@ -34,6 +34,18 @@ class Enemy(Actor):
         self.x = self.x + self.dx
         self.y = self.y + self.dy
 
+class Obstacle(Actor):
+    def __init__(self):
+        super().__init__("humanpicto")
+        self.pos = 400, 200
+
+class Obstacle2(Actor):
+    def __init__(self):
+        super().__init__("humanpicto")
+        self.pos = 100, 300
+
+ob1 = Obstacle()
+ob2 = Obstacle2()
 human = Human()                  
 house = House()
 enemys = [Enemy() for _ in range(5)]
@@ -46,13 +58,15 @@ istouch = False
 #     player.pos = pos
 
 def draw():
-    global time
+    global time, point
     screen.fill([255,255,255])
     screen.draw.text("Let's leave the house and on on a big big adventure!!!!!", (10, 10),color="orange")
     screen.draw.text("Time:" + str(time), (10,30), color="black") 
     screen.draw.text("Score:" + str(point), (10,50), color="black")    
     house.draw()
     human.draw()
+    ob1.draw()
+    ob2.draw()
     for enemy in enemys:
         enemy.draw()
     # screen.draw.circle((400, 400), 30, 'yellow')
@@ -81,6 +95,10 @@ def update():
     for enemy in enemys:
         enemy.update()
         if abs(human.x - enemy.x) <= human.width - 5 and abs(human.y - enemy.y) <= human.height - 10:
+            istouch = True
+        if abs(human.x - ob1.x) <= human.width and abs(human.y - ob1.y) <= human.height:
+            istouch = True
+        if abs(human.x - ob2.x) <= human.width and abs(human.y - ob2.y) <= human.height:
             istouch = True
 
 pgzrun.go()
