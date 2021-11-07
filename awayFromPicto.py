@@ -13,7 +13,6 @@ class House(Actor):
         super().__init__("humanpicto")
         self.pos = 400, 700
 
-
 class Human(Actor):
     def __init__(self):
         super().__init__("humanpicto")
@@ -102,3 +101,7 @@ def update():
             istouch = True
 
 pgzrun.go()
+
+
+# 画像を変える
+# 位置を変える
