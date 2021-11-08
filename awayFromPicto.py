@@ -14,10 +14,12 @@ class House(Actor):
         super().__init__("house")
         self.pos = 400, 700
 
+
 class Human(Actor):
     def __init__(self):
         super().__init__("human")
         self.pos = 400, 600
+
 
 class Enemy(Actor):
     def __init__(self):
@@ -33,16 +35,25 @@ class Enemy(Actor):
         self.x = self.x + self.dx
         self.y = self.y + self.dy
 
+
 class Obstacle(Actor):
     def __init__(self):
         super().__init__("robot_down")
         self.pos = 400, 200
     
+    def place_obstracle1(self):
+        self.x = randint(20, (WIDTH - 20))
+        self.y = randint(20, (HEIGHT - 20))
+        
 
 class Obstacle2(Actor):
     def __init__(self):
         super().__init__("robot_fall")
         self.pos = 100, 300
+    
+    def place_obstracle2(self):
+        self.x = randint(30, (WIDTH - 20))
+        self.y = randint(30, (HEIGHT - 20))
 
 ob1 = Obstacle()
 ob2 = Obstacle2()
@@ -51,17 +62,11 @@ house = House()
 enemys = [Enemy() for _ in range(5)]
 istouch = False
 
-def place_obstracle():
-    ob1.x = randint(20, (WIDTH - 20))
-    ob1.y = randint(20, (HEIGHT - 20))
-    ob2.x = randint(30, (WIDTH - 20))
-    ob2.y = randint(30, (HEIGHT - 20))
-
 
 def draw():
     global time, point, istouch
     screen.fill([255,255,255])
-    screen.draw.text("Let's leave the house and on on a big big adventure!!!!!", (10, 10),color="orange")
+    screen.draw.text("Let's leave the house and on a big big adventure!!!!!", (10, 10),color="orange")
     screen.draw.text("Time:" + str(time), (10,30), color="black") 
     screen.draw.text("Score:" + str(point), (10,50), color="black")    
     house.draw()
@@ -96,7 +101,8 @@ def update():
         human.y = house.y - 100
         global point
         point = point + 1
-        place_obstracle()
+        ob1.place_obstracle1()
+        ob2.place_obstracle2()
     if keyboard.left:
         if house.x <= house.height:
             pass
