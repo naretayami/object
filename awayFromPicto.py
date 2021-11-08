@@ -98,11 +98,17 @@ def update():
         point = point + 1
         place_obstracle()
     if keyboard.left:
-        house.x -= 2
-        human.x -= 2
+        if house.x <= house.height:
+            pass
+        else:    
+            house.x -= 2
+            human.x -= 2
     if keyboard.right:
-        house.x += 2
-        human.x += 2
+        if house.x >= WIDTH - house.width:
+            pass
+        else:
+            house.x += 2
+            human.x += 2
     if keyboard.space:
         human.y -= 2
             
