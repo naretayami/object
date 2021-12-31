@@ -1,0 +1,194 @@
+<html>
+<head>
+<title>
+Away From Picto(JavaScript)
+</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+<script>
+   let countupVal, updateVal;
+
+   let point = 0;
+   let pointup = function(){
+    point = point + 1;
+    document.getElementById("pointer").innerHTML = point;
+   }
+   
+   let count = 10;
+   let countup = function(){
+      count = count - 1;
+      document.getElementById("timer").innerHTML = count;
+      if (count === 0) { //countが0の時はゲームオーバー
+        gameover();
+      }
+    }
+    countupVal = setInterval(countup, 1000); // 1秒ごとに countupを呼ぶ
+    
+
+    let Human = function() { // Human のコンストラクタ関数
+      this.image = new Image();
+      this.image.style.position = "fixed";
+    }
+    
+
+    let Player = function() { // Player のコンストラクタ関数
+      Human.apply(this,arguments);
+      this.x = 0;
+      this.y = 0;
+      this.image.src = "shipGreen_manned.png";
+    }
+
+
+    let Enemy = function() { // Enemy のコンストラクタ関数
+      Human.apply(this,arguments);
+      this.x = Math.floor( Math.random() * window.innerWidth - this.image.width);
+      this.y = Math.floor( Math.random() * window.innerHeight - this.image.height);
+      this.dx = Math.floor( Math.random() * 11 ) - 5;
+      this.dy = Math.floor( Math.random() * 11 ) - 5;
+      this.image.src = "bee_move.png";
+    }
+
+
+    let Mob = function() {
+      Human.apply(this,arguments);
+      this.x = Math.floor( Math.random() * window.innerWidth - this.image.width);
+      this.y = Math.floor( Math.random() * window.innerHeight - this.image.height);
+      this.image.src = "fishPink.png";
+    }
+
+
+    let Target = function() { 
+      Human.apply(this,arguments);
+      this.x = Math.floor( Math.random() * window.innerWidth - this.image.width);
+      this.y = Math.floor( Math.random() * window.innerHeight - this.image.height);
+      this.image.src = "hudKey_red.png";
+    }
+
+
+    Player.prototype = new Human;
+    Enemy.prototype = new Human;
+    Mob.prototype = new Human;
+    Target.prototype = new Human;
+
+
+    Enemy.prototype.update = function(){
+      this.x = this.x + this.dx;
+      this.y = this.y + this.dy;
+      if(this.x < 0 || this.x > window.innerWidth - this.image.width) {
+        this.x = this.x - this.dx;
+        this.dx *= -1;
+      }
+      if(this.y < 0 || this.y > window.innerHeight - this.image.height) {
+        this.y = this.y - this.dy;
+        this.dy *= -1;
+      }
+      this.image.style.left = this.x + "px";
+      this.image.style.top = this.y + "px";
+      if((Math.abs(player.x - this.x) < player.image.width) && (Math.abs(player.y - this.y) < player.image.height)){
+        gameover();
+      }
+    }
+
+
+    Mob.prototype.update = function(){
+      this.image.style.left = this.x + "px";
+      this.image.style.top = this.y + "px";
+      if((Math.abs(player.x - this.x) < player.image.width) && (Math.abs(player.y - this.y) < player.image.height)){
+        gameover();
+      }
+    }
+
+    
+    Target.prototype.update = function(){
+      this.x = this.x;
+      this.y = this.y;
+      if(this.x < 0 || this.x > window.innerWidth - this.image.width) {
+        this.x = 0;
+      }
+      if(this.y < 0 || this.y > window.innerHeight - this.image.height) {
+        this.y = 0;
+      }
+      this.image.style.left = this.x + "px";
+      this.image.style.top = this.y + "px";
+      if((Math.abs(player.x - this.x) < player.image.width) && (Math.abs(player.y - this.y) < player.image.height)){
+        levelup();
+      }
+    }
+
+
+    let player;
+    let mob = new Array(3);
+    let enemy = new Array(7);
+    let target;
+
+
+
+    window.onload = function(){ // ブラウザにコンテンツがロードされたときに1度だけ呼ばれる関数
+      player = new Player();
+      target = new Target();
+      for(let k = 0; k < mob.length; k++){
+        mob[k] = new Mob();
+      }
+      
+      for(let i = 0; i < enemy.length; i++){
+        enemy[i] = new Enemy();
+      }
+      document.body.appendChild(player.image);
+
+      for(let k = 0; k < mob.length; k++){
+        document.body.appendChild(mob[k].image);
+      }
+
+      for(let i = 0; i < enemy.length; i++){
+        document.body.appendChild(enemy[i].image);
+      }
+
+      document.body.appendChild(target.image);
+
+      // マウスが移動したときに MouseMove 関数が呼ばれるようにイベントリスナを設定
+      if(document.addEventListener){ 
+        document.addEventListener("mousemove" , MouseMove);
+      }else if(document.attachEvent){
+        document.attachEvent("onmousemove" , MouseMove);
+      }
+    }
+
+    function MouseMove(e){
+      player.x = (e.clientX - player.image.width / 2) ;
+      player.y = (e.clientY - player.image.height / 2) ;
+      player.image.style.left = player.x + "px";
+      player.image.style.top  = player.y + "px";
+    }
+
+    let update = function(){ // 画像表示のアップデート
+      for(let i = 0; i < enemy.length; i++){
+        enemy[i].update();
+      }
+      for(let k = 0; k < mob.length; k++){
+        mob[k].update();
+      }
+      target.update();
+    }
+    
+    updateVal = setInterval(update, 10); // 関数updateを10msごとに呼び出す．
+
+    function levelup(){ // pointを加算する、countを戻す、targetを移動させる。
+      count = 10;
+      pointup();
+      target.x = Math.floor( Math.random() * window.innerWidth - target.image.width);
+      target.y = Math.floor( Math.random() * window.innerWidth - target.image.width);
+    }
+
+    function gameover(){
+      clearInterval(countupVal); // 関数countupを一定時間ごとに呼び出していたのを止める．
+      clearInterval(updateVal); // 関数updateを一定時間ごとに呼び出していたのを止める．
+      document.write('<p>GAME OVER  あなたの得点は' + point + '点です</p>');
+    }
+    
+</script>
+</head>
+<body bgcolor="white">
+  Timer:<div id="timer">0</div><br>
+  Point:<div id="pointer">0</div><br>
+</body>
+</html>
